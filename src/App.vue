@@ -1,12 +1,37 @@
 <template>
-  <Navigation />
+  <Navigation v-if="!navigation" />
   <RouterView />
-  <Footer />
+  <Footer v-if="!navigation" />
 </template>
 
 <script setup>
 import Navigation from './components/NavigationBar.vue';
 import Footer from './components/Footer.vue';
+import { onBeforeMount, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const navigation = ref(true);
+
+const checkRoute = () => {
+  if (['Login', 'Register', 'ForgotPassword'].includes(route.name)) {
+    navigation.value = true;
+    return;
+  }
+
+  navigation.value = false;
+};
+
+onBeforeMount(() => {
+  checkRoute();
+});
+
+watch(
+  () => route.name,
+  () => {
+    checkRoute();
+  }
+);
 </script>
 
 <style>

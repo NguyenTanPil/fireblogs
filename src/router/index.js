@@ -26,7 +26,26 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/AboutView.vue')
+    component: () => import('../views/LoginView.vue'),
+    meta: {
+      title: 'Login'
+    }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/RegisterView.vue'),
+    meta: {
+      title: 'Register'
+    }
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('../views/ForgotPasswordView.vue'),
+    meta: {
+      title: 'Forgot Password'
+    }
   }
 ];
 
