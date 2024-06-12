@@ -27,8 +27,9 @@
           <input type="text" placeholder="Password" v-model="password" />
           <img class="icon" :src="passwordImage" alt="" />
         </div>
+        <div v-show="isError" class="error">{{ errorMessage }}</div>
       </div>
-      <button type="button">Sign Up</button>
+      <button type="button" @click="register">Sign Up</button>
       <div class="angle"></div>
     </form>
     <div class="background"></div>
@@ -36,16 +37,60 @@
 </template>
 
 <script setup>
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import emailImage from '../assets/Icons/envelope-regular.svg';
 import passwordImage from '../assets/Icons/lock-alt-solid.svg';
 import userImage from '../assets/Icons/user-alt-light.svg';
-import { ref } from 'vue';
+import db, { auth } from '../firebase/firebaseInit';
 
 const firstName = ref(null);
 const lastName = ref(null);
 const username = ref(null);
 const email = ref(null);
 const password = ref(null);
+const isError = ref(null);
+const errorMessage = ref('');
+const router = useRouter();
+
+const register = async () => {
+  if (
+    firstName.value !== '' &&
+    lastName.value !== '' &&
+    username.value !== '' &&
+    email.value !== '' &&
+    password.value !== ''
+  ) {
+    isError.value = false;
+    errorMessage.value = '';
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email.value,
+        password.value
+      );
+      const user = userCredential.user;
+      await addDoc(collection(db, 'users'), {
+        id: user.uid,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        username: username.value,
+        email: email.value
+      });
+      router.push({ name: 'Home' });
+    } catch (error) {
+      isError.value = true;
+      errorMessage.value = error.message;
+    }
+    return;
+  }
+
+  isError.value = true;
+  errorMessage.value = 'Please fill out all the fields';
+};
 </script>
 
 <style scoped>

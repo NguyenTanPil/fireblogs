@@ -15,11 +15,12 @@
           <input type="text" placeholder="Password" v-model="password" />
           <img class="icon" :src="passwordImage" alt="" />
         </div>
+        <div v-show="isError" class="error">{{ errorMessage }}</div>
       </div>
       <router-link class="forgot-password" :to="{ name: 'ForgotPassword' }"
         >Forgot your password</router-link
       >
-      <button type="button">Sign In</button>
+      <button type="button" @click="login">Sign In</button>
       <div class="angle"></div>
     </form>
     <div class="background"></div>
@@ -30,9 +31,28 @@
 import emailImage from '../assets/Icons/envelope-regular.svg';
 import passwordImage from '../assets/Icons/lock-alt-solid.svg';
 import { ref } from 'vue';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/firebaseInit';
+import { useRouter } from 'vue-router';
 
 const email = ref(null);
 const password = ref(null);
+const isError = ref(false);
+const errorMessage = ref('');
+const router = useRouter();
+
+const login = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => {
+      isError.value = false;
+      errorMessage.value = '';
+      router.push({ name: 'Home' });
+    })
+    .catch((error) => {
+      isError.value = true;
+      errorMessage.value = error.message;
+    });
+};
 </script>
 
 <style>
