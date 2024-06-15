@@ -31,7 +31,9 @@
           <ul>
             <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
             <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
-            <router-link class="link" :to="{ name: 'Login' }"> Login In / Register</router-link>
+            <router-link v-if="!user" class="link" :to="{ name: 'Login' }">
+              Login In / Register</router-link
+            >
           </ul>
         </div>
       </div>
@@ -47,6 +49,10 @@ import youtube from '../assets/Icons/youtube-brands.svg';
 import twitter from '../assets/Icons/twitter-brands.svg';
 import instagram from '../assets/Icons/instagram-brands.svg';
 import linkedin from '../assets/Icons/linkedin-brands.svg';
+import { useProfile } from '@/stores/profile';
+
+const profileStore = useProfile();
+const { user } = profileStore.profile;
 </script>
 
 <style scoped>

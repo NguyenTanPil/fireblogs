@@ -1,5 +1,5 @@
 <template>
-  <div class="blog-wrapper no-user">
+  <div class="blog-wrapper" :class="{ 'no-user': !user }">
     <div class="blog-content">
       <div>
         <h2 v-if="post.isWelcomeScreen">{{ post.title }}</h2>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup>
+import { useProfile } from '@/stores/profile';
 import arrow from '../assets/Icons/arrow-right-light.svg';
 
 defineProps({
@@ -30,6 +31,9 @@ defineProps({
     required: true
   }
 });
+
+const profileStore = useProfile();
+const { user } = profileStore.profile;
 
 const blogPhotoUrl = (imageString) => {
   return new URL(`../assets/blogPhotos/${imageString}.jpg`, import.meta.url).href;

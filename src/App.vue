@@ -9,9 +9,15 @@ import Navigation from './components/NavigationBar.vue';
 import Footer from './components/Footer.vue';
 import { onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { auth } from './firebase/firebaseInit';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useProfile } from './stores/profile';
 
 const route = useRoute();
 const navigation = ref(true);
+
+const profileStore = useProfile();
+const { getCurrentUser, updateUser } = profileStore;
 
 const checkRoute = () => {
   if (['Login', 'Register', 'ForgotPassword'].includes(route.name)) {
@@ -24,6 +30,12 @@ const checkRoute = () => {
 
 onBeforeMount(() => {
   checkRoute();
+  onAuthStateChanged(auth, (user) => {
+    updateUser(user);
+    if (user) {
+      getCurrentUser();
+    }
+  });
 });
 
 watch(

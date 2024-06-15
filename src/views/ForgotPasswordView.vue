@@ -5,14 +5,17 @@
     <div class="form-wrap">
       <form class="reset">
         <h2>Reset Password</h2>
-        <p>Forgot your password? Enter your email to reset it</p>
+        <p>
+          Forgot your password? <br />
+          Enter your email to reset it
+        </p>
         <div class="inputs">
           <div class="input">
             <input type="text" placeholder="Email" v-model="email" />
             <img class="icon" :src="emailImage" alt="" />
           </div>
         </div>
-        <button type="button">Reset</button>
+        <button type="button" @click="resetPassword">Reset</button>
         <div class="angle"></div>
       </form>
       <div class="background"></div>
@@ -25,6 +28,8 @@ import { ref } from 'vue';
 import emailImage from '../assets/Icons/envelope-regular.svg';
 import Modal from '../components/Modal.vue';
 import Loading from '../components/Loading.vue';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../firebase/firebaseInit';
 
 const email = ref('');
 const modalActive = ref(false);
@@ -34,6 +39,23 @@ const loading = ref(false);
 const closeModal = () => {
   modalActive.value = false;
   email.value = '';
+};
+
+const resetPassword = () => {
+  loading.value = true;
+  sendPasswordResetEmail(auth, email.value)
+    .then(() => {
+      modalMessage.value = 'If your account exists, you will receive a email';
+      loading.value = false;
+      modalActive.value = true;
+    })
+    .catch((error) => {
+      console.log({ error });
+      const errorMessage = error.message;
+      modalMessage.value = errorMessage;
+      loading.value = false;
+      modalActive.value = true;
+    });
 };
 </script>
 

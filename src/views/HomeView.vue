@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <div class="updates">
+    <div v-if="!user" class="updates">
       <div class="container">
         <h2>Never miss a post. Register for your account today!</h2>
         <router-link class="router-button"> Register for FireBlogs </router-link>
@@ -25,6 +25,7 @@ import BlogPost from '../components/BlogPost.vue';
 import BlogCards from '../components/BlogCard.vue';
 import { useBlogCardsStore } from '../stores/blogCards.js';
 import { storeToRefs } from 'pinia';
+import { useProfile } from '@/stores/profile';
 
 const welcomeScreen = reactive({
   title: 'Welcome!',
@@ -46,6 +47,9 @@ const sampleBlogPost = ref([
     blogCoverPhoto: 'designed-for-everyone'
   }
 ]);
+
+const profileStore = useProfile();
+const { user } = profileStore.profile;
 
 const blogCardsStore = useBlogCardsStore();
 const { sampleBlogCards } = storeToRefs(blogCardsStore);
