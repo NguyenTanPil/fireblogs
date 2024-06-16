@@ -1,3 +1,105 @@
-<template>Admin</template>
+<template>
+  <div class="admin">
+    <Modal v-if="modalActive" :modalMessage="modalMessage" @close-modal="closeModal" />
+    <div class="container">
+      <h2>Administration</h2>
 
-<script setup></script>
+      <div class="admin-info">
+        <h2>Add Admin</h2>
+
+        <div class="input">
+          <input
+            type="text"
+            placeholder="Enter user email to make them an admin"
+            id="addAdmins"
+            v-model="adminEmail"
+          />
+        </div>
+
+        <span>{{ functionMsg }}</span>
+        <button class="button" @click="addAdmin">Submit</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import Modal from '@/components/Modal.vue';
+import { ref } from 'vue';
+
+const adminEmail = ref('');
+const functionMsg = ref(null);
+const modalActive = ref(false);
+const modalMessage = ref('');
+
+const addAdmin = () => {
+  modalActive.value = true;
+  modalMessage.value = 'Add new an admin is a feature!';
+};
+
+const closeModal = () => {
+  modalActive.value = false;
+  modalMessage.value = '';
+  adminEmail.value = '';
+};
+</script>
+
+<style scoped>
+.admin {
+  .container {
+    max-width: 1000px;
+    padding: 60px 25px;
+
+    h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 300;
+      font-size: 32px;
+    }
+
+    .admin-info {
+      border-radius: 8px;
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      background-color: #f1f1f1;
+      max-width: 600px;
+      margin: 32px auto;
+
+      span {
+        font-size: 14px;
+      }
+
+      .input {
+        margin: 16px;
+
+        label {
+          font-size: 14px;
+          display: block;
+          padding-bottom: 6px;
+        }
+
+        input {
+          width: 100%;
+          border: none;
+          background-color: #f2f6f7;
+          padding: 8px;
+          height: 50px;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+
+      button {
+        align-self: center;
+      }
+    }
+  }
+}
+</style>
