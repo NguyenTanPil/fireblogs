@@ -1,5 +1,5 @@
 import db, { auth } from '@/firebase/firebaseInit';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
 
@@ -13,6 +13,22 @@ export const useProfile = defineStore('profile', () => {
     profileInitials: null,
     profileUsername: null
   });
+
+  const updateFirstName = (firstName) => {
+    profile.profileFirstName = firstName;
+  };
+
+  const updateLastName = (lastName) => {
+    profile.profileLastName = lastName;
+  };
+
+  const updateUsername = (username) => {
+    profile.profileUsername = username;
+  };
+
+  const updateEmail = (email) => {
+    profile.profileEmail = email;
+  };
 
   const updateUser = (user) => {
     profile.user = user;
@@ -34,13 +50,35 @@ export const useProfile = defineStore('profile', () => {
 
   const getCurrentUser = async () => {
     const currentUser = auth.currentUser;
-    const q = query(collection(db, 'users'), where('id', '==', currentUser.uid));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      setProfileInfo(doc);
+    const docRef = doc(db, 'users', currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setProfileInfo(docSnap);
+    }
+
+    setProfileInitials();
+  };
+
+  const updateUserSettings = async () => {
+    const userDocRef = doc(db, 'users', profile.profileId);
+    await updateDoc(userDocRef, {
+      firstName: profile.profileFirstName,
+      lastName: profile.profileLastName,
+      username: profile.profileUsername
     });
     setProfileInitials();
   };
 
-  return { profile, getCurrentUser, updateUser, setProfileInfo, setProfileInitials };
+  return {
+    profile,
+    getCurrentUser,
+    updateUser,
+    setProfileInfo,
+    setProfileInitials,
+    updateFirstName,
+    updateLastName,
+    updateUsername,
+    updateEmail,
+    updateUserSettings
+  };
 });

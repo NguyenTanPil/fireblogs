@@ -46,6 +46,22 @@ const routes = [
     meta: {
       title: 'Forgot Password'
     }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../views/ProfileView.vue'),
+    meta: {
+      title: 'Profile'
+    }
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/AdminView.vue'),
+    meta: {
+      title: 'Admin'
+    }
   }
 ];
 

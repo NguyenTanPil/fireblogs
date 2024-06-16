@@ -38,7 +38,7 @@
 
 <script setup>
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import emailImage from '../assets/Icons/envelope-regular.svg';
@@ -73,7 +73,7 @@ const register = async () => {
         password.value
       );
       const user = userCredential.user;
-      await addDoc(collection(db, 'users'), {
+      await setDoc(doc(db, 'users', user.uid), {
         id: user.uid,
         firstName: firstName.value,
         lastName: lastName.value,
