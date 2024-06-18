@@ -70,6 +70,22 @@ const routes = [
     meta: {
       title: 'Create Post'
     }
+  },
+  {
+    path: '/blog-preview',
+    name: 'BlogPreview',
+    component: () => import('../views/BlogPreviewView.vue'),
+    meta: {
+      title: 'Blog Preview'
+    }
+  },
+  {
+    path: '/view-blog',
+    name: 'ViewBlog',
+    component: () => import('../views/BlogDetailView.vue'),
+    meta: {
+      title: 'View Blog'
+    }
   }
 ];
 

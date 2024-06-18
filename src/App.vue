@@ -154,9 +154,22 @@ button,
   }
 }
 
-.error {
+.error-message {
   text-align: center;
   font-size: 12px;
   color: red;
+}
+
+.editor {
+  .ql-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 72px);
+    overflow: auto;
+  }
+
+  .ql-editor {
+    padding: 20px 16px 30px;
+  }
 }
 </style>
