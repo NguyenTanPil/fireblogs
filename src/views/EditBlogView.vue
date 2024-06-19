@@ -39,50 +39,49 @@
         />
       </div>
       <div class="blog-actions">
-        <button @click="publishBlog">Publish Blog</button>
-        <router-link class="router-button" :to="{ name: 'BlogPreview' }">Post Preview</router-link>
+        <button @click="updateBlog">Save Change</button>
+        <router-link class="router-button" :to="{ name: 'BlogPreview' }"
+          >Preview Changes</router-link
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { usePost } from '@/stores/post';
-import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { VueEditor } from 'vue3-editor';
-import Quill from 'quill';
-window.Quill = Quill;
-import ImageResize from 'quill-image-resize-vue';
 import BlogCoverPreview from '@/components/BlogCoverPreview.vue';
-import { ref as storeRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import db, { storage } from '@/firebase/firebaseInit';
-import { doc, setDoc } from 'firebase/firestore';
-import { useProfile } from '@/stores/profile';
-import { v4 as uuidv4 } from 'uuid';
-import { useRouter } from 'vue-router';
 import Loading from '@/components/Loading.vue';
+import { storage } from '@/firebase/firebaseInit';
 import { useBlogPosts } from '@/stores/blogPosts';
+import { usePost } from '@/stores/post';
+import { getDownloadURL, ref as storeRef, uploadBytesResumable } from 'firebase/storage';
+import { storeToRefs } from 'pinia';
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-vue';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { VueEditor } from 'vue3-editor';
+window.Quill = Quill;
 
 Quill.register('modules/imageResize', ImageResize);
 
+const route = useRoute();
 const router = useRouter();
 
 const postStore = usePost();
 const { blogHTML, blogTitle, blogPhotoName, blogPhotoFileURL, blogPhotoPreview } =
   storeToRefs(postStore);
-const { createFileURL, fileNameChange, togglePhotoPreview } = postStore;
-
-const profileStore = useProfile();
+const { createFileURL, fileNameChange, togglePhotoPreview, updatePost } = postStore;
 
 const blogPostsStore = useBlogPosts();
-const { getPosts } = blogPostsStore;
+const { blogPost } = storeToRefs(blogPostsStore);
 
 const file = ref(null);
 const blogPhotoRef = ref(null);
 const error = ref(null);
 const errorMsg = ref(null);
 const isLoading = ref(null);
+const currentBlog = ref({});
 const editorSettings = ref({
   modules: {
     imageResize: {}
@@ -126,62 +125,15 @@ const imageHandler = (file, Editor, cursorLocation, resetUploader) => {
   );
 };
 
-const resetError = () => {
-  setTimeout(() => {
-    error.value = false;
-    errorMsg.value = '';
-  }, 50000);
+const updateBlog = () => {
+  // logic to update the blog
+  router.push({ name: 'ViewBlog', params: { blogId: route.params.blogId } });
 };
 
-const publishBlog = () => {
-  if (blogTitle.value.length > 0 && blogHTML.value.length > 0) {
-    if (file.value) {
-      isLoading.value = true;
-      const storageRef = storeRef(storage, `documents/blogPostPhotos/${blogPhotoName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          console.log({ snapshot });
-        },
-        (error) => {
-          console.log({ error });
-          isLoading.value = false;
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            const blogId = uuidv4();
-            const timestamp = Date.now();
-            await setDoc(doc(db, 'blogPosts', blogId), {
-              blogId,
-              blogHTML: blogHTML.value,
-              blogTitle: blogTitle.value,
-              blogCoverPhoto: downloadURL,
-              blogCoverPhotoName: blogPhotoName.value,
-              profileId: profileStore.profile.profileId,
-              date: timestamp
-            });
-            isLoading.value = false;
-            getPosts();
-            router.push({ name: 'ViewBlog', params: { blogId } });
-          });
-        }
-      );
-      return;
-    }
-
-    error.value = true;
-    errorMsg.value = 'Please ensure updated a cover photo!';
-    resetError();
-    return;
-  }
-
-  error.value = true;
-  errorMsg.value = 'Please ensure Blog Title and Blog Post has been filled!';
-
-  resetError();
-};
+onMounted(() => {
+  currentBlog.value = blogPost.value.find((post) => post.blogId === route.params.blogId);
+  updatePost(currentBlog.value);
+});
 </script>
 
 <style scoped>

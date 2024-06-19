@@ -1,10 +1,10 @@
 <template>
   <div class="blog-card">
     <div v-show="editPost" class="icons">
-      <div class="icon">
+      <div class="icon" @click="editPostDetails">
         <img class="edit" :src="editImage" alt="" />
       </div>
-      <div class="icon">
+      <div class="icon" @click="deletePost(post.id)">
         <img class="delete" :src="deleteImage" alt="" />
       </div>
     </div>
@@ -13,7 +13,10 @@
     <div class="info">
       <h4>{{ post.blogTitle }}</h4>
       <h6>Posted on: {{ post.blogDate }}</h6>
-      <router-link class="link" to="#">
+      <router-link
+        class="link"
+        :to="{ name: 'ViewBlog', params: { blogId: 'c2c281c6-a448-4c7c-8eb6-c173d55fcfd4' } }"
+      >
         View The Post <img class="arrow" :src="arrowImage" alt="" />
       </router-link>
     </div>
@@ -21,6 +24,7 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import arrowImage from '../assets/Icons/arrow-right-light.svg';
 import editImage from '../assets/Icons/edit-regular.svg';
 import deleteImage from '../assets/Icons/trash-regular.svg';
@@ -34,11 +38,18 @@ defineProps({
   }
 });
 
+const router = useRouter();
+
 const blogCardsStore = useBlogCardsStore();
 const { editPost } = storeToRefs(blogCardsStore);
+const { deletePost } = blogCardsStore;
 
 const getBlogCardUrl = (imageString) => {
   return new URL(`../assets/blogCards/${imageString}.jpg`, import.meta.url).href;
+};
+
+const editPostDetails = () => {
+  router.push({ name: 'EditBlog', params: { blogId: '1' } });
 };
 </script>
 

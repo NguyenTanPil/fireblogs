@@ -26,6 +26,7 @@ import BlogCards from '../components/BlogCard.vue';
 import { useBlogCardsStore } from '../stores/blogCards.js';
 import { storeToRefs } from 'pinia';
 import { useProfile } from '@/stores/profile';
+import { useBlogPosts } from '@/stores/blogPosts';
 
 const welcomeScreen = reactive({
   title: 'Welcome!',
@@ -53,6 +54,10 @@ const { user } = profileStore.profile;
 
 const blogCardsStore = useBlogCardsStore();
 const { sampleBlogCards } = storeToRefs(blogCardsStore);
+
+const blogPostsStore = useBlogPosts();
+const { blogPostsCards } = storeToRefs(blogPostsStore);
+console.log({ blogPostsCards });
 </script>
 
 <style scoped>

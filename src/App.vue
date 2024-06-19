@@ -1,7 +1,9 @@
 <template>
-  <Navigation v-if="!navigation" />
-  <RouterView />
-  <Footer v-if="!navigation" />
+  <div class="app" v-if="postLoaded">
+    <Navigation v-if="!navigation" />
+    <RouterView />
+    <Footer v-if="!navigation" />
+  </div>
 </template>
 
 <script setup>
@@ -12,12 +14,17 @@ import { useRoute } from 'vue-router';
 import { auth } from './firebase/firebaseInit';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useProfile } from './stores/profile';
+import { useBlogPosts } from './stores/blogPosts';
+import { storeToRefs } from 'pinia';
 
 const route = useRoute();
 const navigation = ref(true);
 
 const profileStore = useProfile();
 const { getCurrentUser, updateUser } = profileStore;
+const blogPostsStore = useBlogPosts();
+const { postLoaded } = storeToRefs(blogPostsStore);
+const { getPosts } = blogPostsStore;
 
 const checkRoute = () => {
   if (['Login', 'Register', 'ForgotPassword'].includes(route.name)) {
@@ -30,6 +37,7 @@ const checkRoute = () => {
 
 onBeforeMount(() => {
   checkRoute();
+  getPosts();
   onAuthStateChanged(auth, (user) => {
     updateUser(user);
     if (user) {

@@ -13,12 +13,18 @@ export const usePost = defineStore('post', () => {
   };
 
   const createFileURL = (fileUrl) => {
-    console.log({ fileUrl });
     blogPhotoFileURL.value = fileUrl;
   };
 
   const togglePhotoPreview = () => {
     blogPhotoPreview.value = !blogPhotoPreview.value;
+  };
+
+  const updatePost = (data) => {
+    blogTitle.value = data.blogTitle;
+    blogHTML.value = data.blogHTML;
+    blogPhotoFileURL.value = data.blogCoverPhoto;
+    blogPhotoName.value = data.blogCoverPhotoName;
   };
 
   return {
@@ -29,6 +35,7 @@ export const usePost = defineStore('post', () => {
     blogPhotoPreview,
     fileNameChange,
     createFileURL,
-    togglePhotoPreview
+    togglePhotoPreview,
+    updatePost
   };
 });

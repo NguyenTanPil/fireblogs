@@ -11,11 +11,6 @@ const routes = [
     }
   },
   {
-    path: '/new-post',
-    name: 'NewPost',
-    component: () => import('../views/AboutView.vue')
-  },
-  {
     path: '/blogs',
     name: 'Blogs',
     component: () => import('../views/BlogsView.vue'),
@@ -80,9 +75,17 @@ const routes = [
     }
   },
   {
-    path: '/view-blog',
+    path: '/view-blog/:blogId',
     name: 'ViewBlog',
     component: () => import('../views/BlogDetailView.vue'),
+    meta: {
+      title: 'View Blog'
+    }
+  },
+  {
+    path: '/edit-blog/:blogId',
+    name: 'EditBlog',
+    component: () => import('../views/EditBlogView.vue'),
     meta: {
       title: 'View Blog'
     }
@@ -95,7 +98,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log({ to, from });
   document.title = `${to.meta.title} | FireBlogs`;
   next();
 });
